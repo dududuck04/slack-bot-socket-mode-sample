@@ -1,0 +1,79 @@
+{
+  "source_id": "271155810841672865",
+  "version": "1",
+  "workflow": {
+    "name": "Project Status Update",
+    "blueprint": {
+      "version": "1",
+      "trigger": {
+        "type": "channel_action",
+        "id": "02474aff-5858-4562-83fd-467d2d43ed4b",
+        "config": {
+          "name": "Share Status Update",
+          "channels": [
+            ""
+          ],
+          "callback_id": "e7e4a6b6-6225-4d2f-90ab-75fc84c1110f",
+          "description": "Share Status Update"
+        }
+      },
+      "steps": [
+        {
+          "type": "dialog",
+          "id": "47611e8d-cbcb-4eb2-b2bd-d4be5437e3c5",
+          "config": {
+            "dialog_title": "Project Acme Update",
+            "dialog_elements": [
+              {
+                "name": "872b2901-5146-4aa6-8820-fa00a4d84bf2",
+                "type": "text",
+                "label": "Date Range for this Status Update",
+                "subtype": "",
+                "optional": false,
+                "placeholder": ""
+              },
+              {
+                "name": "ec9ac466-80c6-4121-a0cb-4fb7ef48f225",
+                "type": "text",
+                "label": "What's the headline for this period's progress?",
+                "subtype": "",
+                "optional": false,
+                "placeholder": ""
+              },
+              {
+                "name": "f8f51b08-523d-4669-ba08-ea308cf2e550",
+                "type": "textarea",
+                "label": "What are key progress updates to highlight?",
+                "optional": false
+              },
+              {
+                "name": "6c4ceabd-541e-4d76-8c7e-27f5b93c8210",
+                "type": "textarea",
+                "label": "What are key areas of focus for the next period?",
+                "optional": false
+              },
+              {
+                "name": "83e897e5-5eb4-44b8-a319-e56f71da17d2",
+                "type": "textarea",
+                "label": "Any key challenges to highlight?",
+                "optional": true
+              }
+            ],
+            "dialog_submit_label": "",
+            "delivery_button_label": "Fill Out Form",
+            "delivery_message_text": "Hello! To get started, please fill out this form."
+          }
+        },
+        {
+          "type": "message",
+          "id": "a59c9db0-37d0-4d58-bac6-25b7268bae69",
+          "config": {
+            "channel": {},
+            "has_button": false,
+            "message_text": ":mega: *{{47611e8d-cbcb-4eb2-b2bd-d4be5437e3c5==ec9ac466-80c6-4121-a0cb-4fb7ef48f225==text}}*\n\n:calendar: *Status Update for the Period:*\n&gt;{{47611e8d-cbcb-4eb2-b2bd-d4be5437e3c5==872b2901-5146-4aa6-8820-fa00a4d84bf2==text}}\n\n:sparkles: *Progress Highlights:*\n&gt;{{47611e8d-cbcb-4eb2-b2bd-d4be5437e3c5==f8f51b08-523d-4669-ba08-ea308cf2e550==text}}\n\n:eyes: *Focus Areas Going Forward:*\n&gt;{{47611e8d-cbcb-4eb2-b2bd-d4be5437e3c5==6c4ceabd-541e-4d76-8c7e-27f5b93c8210==text}}\n\n:snow_capped_mountain: *Challenges/Risks:*\n&gt;{{47611e8d-cbcb-4eb2-b2bd-d4be5437e3c5==83e897e5-5eb4-44b8-a319-e56f71da17d2==text}}\n\n:question: _Feel free to reach out to {{47611e8d-cbcb-4eb2-b2bd-d4be5437e3c5==user_submitted}} with any questions!_"
+          }
+        }
+      ]
+    }
+  }
+}

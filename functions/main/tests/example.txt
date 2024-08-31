@@ -1,0 +1,36 @@
+async function createBasicInfo(
+    ts_id,
+    region = `ap-northeast-2`,
+    input = ``
+) {
+    // DynamoDB 에 UserName(ts) Check , 존재할 시 에러 발생
+    const checkDynamoDB = await dynamoGet(dynamoTableName, ts_id, region);
+    if (checkDynamoDB.statusCode == 400) {
+        return {
+            statusCode: 400,
+            body: {
+                Error: checkDynamoDB.error,
+                ITEM: checkDynamoDB.body,
+            },
+        };
+    } else {
+        try {
+            const sfnExecuteResult = await sfnExecute(stepFunctionArn, input, region);
+            const dynamoExecuteResult = await dynamoPut(
+                dynamoTableName,
+                ts_id,
+                region,
+                sfnExecuteResult.body.sfnExecutionArn
+            );
+            return {
+                statusCode: 200,
+                body: {
+                    stepFunctionResult: sfnExecuteResult.body,
+                    dynamoDBResult: dynamoExecuteResult.body,
+                },
+            };
+        } catch (err) {
+            return err;
+        }
+    }
+}

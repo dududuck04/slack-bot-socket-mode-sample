@@ -1,0 +1,68 @@
+{
+  "source_id": "321353598401263772",
+  "version": "1",
+  "workflow": {
+    "name": "Task from emoji",
+    "blueprint": {
+      "version": "1",
+      "trigger": {
+        "type": "reaction_added",
+        "id": "070d9892-04f1-43b3-8ee1-a4cf3231a847",
+        "config": {
+          "channel": {
+            "value": "C4JGH4N6S"
+          },
+          "reactions": [
+            {
+              "value": "memo"
+            }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "type": "extension_step",
+          "id": "bd89e66c-9097-4e89-8630-7d7c00071547",
+          "config": {
+            "app_action": {
+              "name": "Create a task",
+              "type": "workflow_step_edit",
+              "payload": null,
+              "action_id": "Aa01BW5UDF2L",
+              "api_app_id": "A0HBTUUPK",
+              "callback_id": "workflow_step_create_task"
+            },
+            "app_defined_config": {
+              "inputs": {
+                "text": {
+                  "value": "Feedback to review by {{070d9892-04f1-43b3-8ee1-a4cf3231a847==user.name}}"
+                },
+                "listId": {
+                  "value": "5f6e2ec45414c561154962a8"
+                },
+                "deadline": {
+                  "value": "24"
+                },
+                "assignedTo": {
+                  "value": [
+                    "UD619K7PG"
+                  ]
+                },
+                "description": {
+                  "value": "Review message {{070d9892-04f1-43b3-8ee1-a4cf3231a847==message_permalink}}"
+                }
+              },
+              "outputs": [
+                {
+                  "name": "task_url",
+                  "type": "text",
+                  "label": "Task URL"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

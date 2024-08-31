@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  slack-socket-backend
+
+  SAM Template for slack-socket-backend
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Runtime: nodejs18.x
+    Timeout: 10
+    Handler: app.lambdaHandler
+    Architectures:
+      - x86_64
+    Layers:
+      - !Ref SlBackendCommonLayer
+
+# More info about Parameter : https://docs.aws.amazon.com/ko_kr/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
+Parameters:
+  ProjectEnvironment:
+    Type: String
+    Default: dev
+    Description: Project Environment. (dev, prod, ...)
+  ProjectName:
+    Type: String
+    Default: sl
+    Description: Project Name
+  SlackAppToken:
+    Type: String
+    Default:
+    Description: App Token for Slack by Socket Mode
+  SlackSigningSecret:
+    Type: String
+    Default:
+    Description: Signing Secret for Slack by Socket Mode
+
+Resources:
+  # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-api.html
+  SlBackendApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub "${ProjectName}-${ProjectEnvironment}-backend-api"
+      OpenApiVersion: 3.0.1
+      StageName: !Ref ProjectEnvironment
+      #      Auth:
+      #        ApiKeyRequired: true
+      Description: "Sl Backend용 API Gateway."
+      Domain:
+        DomainName: sl.dududuck.net
+        CertificateArn: arn:aws:acm:ap-northeast-2:
+        Route53:
+          HostedZoneId:
+      DefinitionBody:
+        "Fn::Transform":
+          Name: "AWS::Include"
+          Parameters:
+            Location: "api.yaml"
+
+  MainFunction:
+    # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${ProjectName}-${ProjectEnvironment}-backend-app-MainFunction"
+      CodeUri: functions/main/
+      Description: >
+        Backend main function
+      MemorySize: 512
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /sandbox
+            Method: POST
+            RestApiId: !Ref SlBackendApi
+      Environment:
+        Variables:
+          SLACK_APP_TOKEN: !Ref SlackAppToken
+          SLACK_SIGNING_SECRET: !Ref SlackSigningSecret
+      Layers:
+        - !Ref SlBackendSlackLayer
+
+  # 모든 Lambda Function에서 사용하는 공통 모듈용 Layer
+  SlBackendCommonLayer:
+    # More info about 'AWS::Serverless::LayerVersion' Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-layerversion.html
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub "${ProjectEnvironment}-backend-common-layer"
+      Description: \'sl backend\'용 Lamdba에서 공통으로 사용하는 Node.js 모듈 Layer [sl-backend]
+      CompatibleRuntimes:
+        - nodejs18.x
+      ContentUri: function-layers/common/
+      RetentionPolicy: "Delete"
+    Metadata:
+      BuildMethod: makefile
+      BuildArchitecture: x86_64
+
+  # Slack 관련 모듈을 갖는 Layer
+  SlBackendSlackLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub "${ProjectEnvironment}-backend-slack-layer"
+      Description: \'sl backend\'용 Lamdba에서 Slack 처리가 필요한 Function들이 사용하는 Node.js 모듈 Layer
+      CompatibleRuntimes:
+        - nodejs18.x
+      ContentUri: function-layers/slack/
+      RetentionPolicy: "Delete"
+    Metadata:
+      BuildMethod: makefile
+      BuildArchitecture: x86_64
+
+Outputs:
+
+  BackendApiUrl:
+    Description: "API Gateway endpoint URL for stage for Main Function"
+    Value: !Sub "https://${SlBackendApi}.execute-api.${AWS::Region}.amazonaws.com/${ProjectEnvironment}/sandbox"

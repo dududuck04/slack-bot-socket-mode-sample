@@ -1,0 +1,20 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "sl-backend-app"
+s3_bucket = "duck's bucket"
+s3_prefix = "sl-backend-app"
+region = "ap-northeast-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+stack_name = "sam-app"
+resolve_s3 = true
+s3_prefix = "sam-app"
+region = "ap-northeast-2"
+profile = "default"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+parameter_overrides = "ProjectEnvironment=\"dev\" ProjectName=\"sl\""
+image_repositories = []

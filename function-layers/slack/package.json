@@ -1,0 +1,20 @@
+{
+  "name": "SlackLayer",
+  "version": "1.0.0",
+  "description": "Slack Layer package",
+  "main": "app.js",
+  "repository": "https://github.com/awslabs/aws-sam-cli/tree/develop/samcli/local/init/templates/cookiecutter-aws-sam-hello-nodejs",
+  "author": "SAM CLI",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/bolt": "^3.12.2",
+    "slack-block-builder": "^2.7.2"
+  },
+  "scripts": {
+    "test": "mocha tests/unit/"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^10.1.0"
+  }
+}
